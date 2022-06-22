@@ -1,0 +1,6 @@
+# Compiled file
+/venv*
+.idea*
+
+# Python cache
+*pyc
