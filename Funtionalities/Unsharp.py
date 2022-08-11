@@ -1,4 +1,4 @@
-import cv2
+import cv2 as cv
 
 
 def unsharpMasking(img):
@@ -10,8 +10,8 @@ def unsharpMasking(img):
     - add blur image with weight mask
     """
 
-    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    blurred = cv2.GaussianBlur(gray, ksize=(3, 3), sigmaX=0)
+    gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
+    blurred = cv.GaussianBlur(gray, ksize=(3, 3), sigmaX=0)
     mask = gray - blurred
 
     alpha = 1
@@ -31,13 +31,13 @@ def unsharpMasking(img):
     return gray, unsharp
 
 
-img = cv2.imread("../Imgs/statue.jpg")
-img = cv2.resize(img, (500, 500))
+img = cv.imread("../Imgs/statue.jpg")
+img = cv.resize(img, (500, 500))
 gray, unsharp = unsharpMasking(img.copy())
 
-cv2.imshow("Original", gray)
-cv2.imshow("Unsharp", unsharp)
+cv.imshow("Original", gray)
+cv.imshow("Unsharp", unsharp)
 
-cv2.waitKey()
-cv2.destroyAllWindows()
+cv.waitKey()
+cv.destroyAllWindows()
 

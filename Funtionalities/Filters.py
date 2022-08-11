@@ -1,4 +1,3 @@
-import cv2
 import cv2 as cv
 import numpy as np
 from scipy import ndimage
@@ -66,8 +65,8 @@ def hpf(img):
 
 
 if __name__ == "__main__":
-    img = cv2.imread("../Imgs/statue.jpg", 0)
-    img = cv2.resize(img, (500, 500))
+    img = cv.imread("../Imgs/statue.jpg", 0)
+    img = cv.resize(img, (500, 500))
 
     k3 = hpf3x3(img)
     k5 = hpf5x5(img)

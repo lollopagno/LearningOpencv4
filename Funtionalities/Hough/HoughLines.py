@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 
-img = cv2.imread('../../Imgs/duomo.jpg')
+img = cv2.imread('../../Imgs/Hough/duomo.jpg')
 #img = cv2.imread('../../Imgs/metro.jpg')
 
 gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)

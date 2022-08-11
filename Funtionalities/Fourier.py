@@ -1,4 +1,4 @@
-import cv2
+import cv2 as cv
 import numpy as np
 import matplotlib.pyplot as plot
 
@@ -28,6 +28,6 @@ def fastFourierTransform(img):
     plot.show()
 
 
-img = cv2.imread("../Imgs/statue.jpg", 0)
-img = cv2.resize(img, (500, 500))
+img = cv.imread("../Imgs/statue.jpg", 0)
+img = cv.resize(img, (500, 500))
 fastFourierTransform(img)

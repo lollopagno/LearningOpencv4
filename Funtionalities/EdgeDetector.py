@@ -1,59 +1,59 @@
-import cv2
+import cv2 as cv
 import numpy as np
 
 
 def edge_detector(img):
-    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
 
-    ret, thresh = cv2.threshold(gray, 127, 255, cv2.THRESH_BINARY)
-    contours, _ = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    ret, thresh = cv.threshold(gray, 127, 255, cv.THRESH_BINARY)
+    contours, _ = cv.findContours(thresh, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
 
     for c in contours:
-        x, y, w, h = cv2.boundingRect(c)
-        cv2.rectangle(img, (x, y), (x + w, y + h), (0, 255, 0), 2)
+        x, y, w, h = cv.boundingRect(c)
+        cv.rectangle(img, (x, y), (x + w, y + h), (0, 255, 0), 2)
 
-        rect = cv2.minAreaRect(c)  # Minimal rectangar area
-        box = cv2.boxPoints(rect)  # Find 4 vertices of the rectangle
+        rect = cv.minAreaRect(c)  # Minimal rectangar area
+        box = cv.boxPoints(rect)  # Find 4 vertices of the rectangle
         box = np.int0(box)
-        cv2.drawContours(img, [box], 0, (0, 0, 255), 3)
+        cv.drawContours(img, [box], 0, (0, 0, 255), 3)
 
-        (x, y), radius = cv2.minEnclosingCircle(c)
+        (x, y), radius = cv.minEnclosingCircle(c)
         center, radius = (int(x), int(y)), int(radius)
-        img = cv2.circle(img, center, radius, (0, 255, 0), 2)
+        img = cv.circle(img, center, radius, (0, 255, 0), 2)
 
-    cv2.drawContours(img, contours, -1, (255, 0, 0), 1)
+    cv.drawContours(img, contours, -1, (255, 0, 0), 1)
 
     return img
 
 
 def convex_countour(img):
-    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
 
-    ret, thresh = cv2.threshold(gray, 127, 255, cv2.THRESH_BINARY)
-    contours, _ = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    ret, thresh = cv.threshold(gray, 127, 255, cv.THRESH_BINARY)
+    contours, _ = cv.findContours(thresh, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
 
     mask = np.zeros_like(img)
     for c in contours:
-        epsilon = 0.01 * cv2.arcLength(c, True)
-        approx = cv2.approxPolyDP(c, epsilon, True)
-        hull = cv2.convexHull(c)
+        epsilon = 0.01 * cv.arcLength(c, True)
+        approx = cv.approxPolyDP(c, epsilon, True)
+        hull = cv.convexHull(c)
 
-        cv2.drawContours(mask, [c], -1, (255, 0, 0), 1)
-        cv2.drawContours(mask, [approx], -1, (0, 255, 0), 1)
-        cv2.drawContours(mask, [hull], -1, (0, 0, 255), 1)
+        cv.drawContours(mask, [c], -1, (255, 0, 0), 1)
+        cv.drawContours(mask, [approx], -1, (0, 255, 0), 1)
+        cv.drawContours(mask, [hull], -1, (0, 0, 255), 1)
 
     return mask
 
 
 if __name__ == "__main__":
-    img = cv2.pyrDown(cv2.imread("../Imgs/hammer.jpg", cv2.IMREAD_UNCHANGED))
+    img = cv.pyrDown(cv.imread("../Imgs/hammer.jpg", cv.IMREAD_UNCHANGED))
 
     edge = edge_detector(img.copy())
     hull = convex_countour(img.copy())
 
-    cv2.imshow("Orginal", img)
-    cv2.imshow("Contours", edge)
-    cv2.imshow("Hull", hull)
+    cv.imshow("Orginal", img)
+    cv.imshow("Contours", edge)
+    cv.imshow("Hull", hull)
 
-    cv2.waitKey()
-    cv2.destroyAllWindows()
+    cv.waitKey()
+    cv.destroyAllWindows()

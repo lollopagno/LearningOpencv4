@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 
-planets = cv2.imread('../../Imgs/planetGlow.jpg')
+planets = cv2.imread('../../Imgs/Hough/planetGlow.jpg')
 
 gray_img = cv2.cvtColor(planets, cv2.COLOR_BGR2GRAY)
 gray_img = cv2.medianBlur(gray_img, 5)
