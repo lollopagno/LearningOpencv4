@@ -3,14 +3,15 @@ import cv2 as cv
 from CameoModule.Managers.CaptureManager import CaptureManager
 from CameoModule.Managers.WindowManager import WindowManager
 from Common import Keycode
-from CameoModule.Filters import Filters
+from CameoModule.CurveFilters import CurveFilters
+from Funtionalities import Filters
 
 class Cameo(object):
 
     def __init__(self):
         self._windowManager = WindowManager('Cameo', self.onKeypress)
         self._captureManager = CaptureManager(cv.VideoCapture(0), self._windowManager, shouldMirrorPreview=True)
-        self._curveFilter = Filters.BGRVelviaCurveFilter()
+        self._curveFilter = CurveFilters.BGRPortraCurveFilter()
 
     def run(self):
         """
@@ -24,7 +25,7 @@ class Cameo(object):
             frame = self._captureManager.frame
 
             if frame is not None:
-                Filters.strokeEdges(frame, frame, inverting=True)
+                #CurveFilters.strokeEdges(frame, frame, inverting=True)
                 self._curveFilter.apply(frame, frame)
 
             self._captureManager.exitFrame()

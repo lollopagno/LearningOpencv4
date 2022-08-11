@@ -3,6 +3,24 @@ import cv2 as cv
 import numpy as np
 from scipy import ndimage
 
+def strokeEdges(src, dst, inverting=False, blurKsize=7, edgeKsize=5):
+
+    blurredSrc = cv.medianBlur(src, blurKsize)  # Blurred image (LPF)
+    graySrc = cv.cvtColor(blurredSrc, cv.COLOR_BGR2GRAY)  # Conversion to grayscale image
+
+    cv.Laplacian(graySrc, cv.CV_8U, graySrc, ksize=edgeKsize)  # Laplacian edge detector
+
+    # normalizedInverseAlpha = (255 - graySrc) / 255
+    if inverting:
+        graySrc = cv.bitwise_not(graySrc)  # Inversion bit-per-bt grayscale image
+
+    normalized = graySrc / 255  # Normaliced image to [0,1]
+    channels = cv.split(src)  # Splitting channels of the image
+
+    for channel in channels:
+        channel[:] = channel * normalized
+
+    cv.merge(channels, dst)
 
 def hpf3x3(img):
     """
