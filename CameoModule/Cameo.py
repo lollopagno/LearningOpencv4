@@ -4,9 +4,13 @@ from CameoModule.Managers.CaptureManager import CaptureManager
 from CameoModule.Managers.WindowManager import WindowManager
 from Common import Keycode
 from CameoModule.CurveFilters import CurveFilters
-from Funtionalities import Filters
+from Funtionalities import Filters, Depth
+
 
 class Cameo(object):
+    """
+    Cameo object
+    """
 
     def __init__(self):
         self._windowManager = WindowManager('Cameo', self.onKeypress)
@@ -55,3 +59,58 @@ class Cameo(object):
 
         elif keycode == Keycode.ESCAPE:
             self._windowManager.destroyWindow()
+
+
+class CameoDepth(Cameo):
+    """
+    Cameo Depht object.
+    Use to capture frame from depht camera.
+    """
+
+    def __init__(self):
+        super().__init__()
+
+        self._windowManager = WindowManager('Cameo', self.onKeypress)
+
+        # device = cv2.CAP_OPENNI2 # Uncomment for Microsoft Kinect via OpenNI2
+        device = cv.CAP_OPENNI2_ASUS  # Uncomment for Asus Xtion or Occipital Structure via OpenNI2
+        self._captureManager = CaptureManager(cv.VideoCapture(device), self._windowManager, True)
+        self._curveFilter = CurveFilters.BGRPortraCurveFilter()
+
+    def run(self):
+        """Run the main loop."""
+
+        self._windowManager.createWindow()
+
+        while self._windowManager.isWindowCreated:
+
+            self._captureManager.enterFrame()
+            self._captureManager.channel = cv.CAP_OPENNI_DISPARITY_MAP
+            disparityMap = self._captureManager.frame
+
+            self._captureManager.channel = cv.CAP_OPENNI_VALID_DEPTH_MASK
+            validDepthMask = self._captureManager.frame
+
+            self._captureManager.channel = cv.CAP_OPENNI_BGR_IMAGE
+            frame = self._captureManager.frame
+
+            if frame is None:
+                # Failed to capture a BGR frame.
+                # Try to capture an infrared frame instead.
+                self._captureManager.channel = cv.CAP_OPENNI_IR_IMAGE
+                frame = self._captureManager.frame
+
+            if frame is not None:
+
+                # Make everything except the median layer black.
+                mask =  Depth.createMedianMask(disparityMap, validDepthMask)
+                frame[mask == 0] = 0
+
+                if self._captureManager.channel == cv.CAP_OPENNI_BGR_IMAGE:
+                    # A BGR frame was captured.
+                    # Apply filters to it.
+                    Filters.strokeEdges(frame, frame)
+                    self._curveFilter.apply(frame, frame)
+
+            self._captureManager.exitFrame()
+            self._windowManager.processEvents()

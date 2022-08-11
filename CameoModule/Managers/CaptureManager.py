@@ -5,7 +5,7 @@ import cv2 as cv
 
 class CaptureManager(object):
 
-    def __init__(self, capture, previewWindowManager=None, shouldMirrorPreview=False):
+    def __init__(self, capture, previewWindowManager=None, shouldMirrorPreview=False, shouldConvertBitDepth10To8 = True):
         """
         Capture manager class.
         :param capture:                 instance of the VideoCapture object (opencv)
@@ -15,6 +15,7 @@ class CaptureManager(object):
 
         self.previewWindowManager = previewWindowManager
         self.shouldMirrorPreview = shouldMirrorPreview
+        self.shouldConvertBitDepth10To8 = shouldConvertBitDepth10To8
 
         self._capture = capture
         self._channel = 0
@@ -47,6 +48,9 @@ class CaptureManager(object):
 
         if self._enteredFrame and self._frame is None:
             ret, self._frame = self._capture.retrieve(self._frame, self.channel)  # Get frame
+
+            if self.shouldConvertBitDepth10To8 and self._frame is not None and self._frame.dtype == np.uint16:
+                self._frame = (self._frame >> 2).astype(np.uint8)
 
         return self._frame
 
